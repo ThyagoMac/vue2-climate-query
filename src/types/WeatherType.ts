@@ -26,12 +26,13 @@ export type WeatherType = {
   wind: {
     speed: number;
     deg: number;
+    gust?: number;
   };
   clouds: { all: number };
   dt: number;
   sys: {
-    type: number;
-    id: number;
+    type?: number;
+    id?: number;
     country: string;
     sunrise: number;
     sunset: number;
