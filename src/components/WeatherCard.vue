@@ -35,25 +35,23 @@
             <v-col cols="12">
               <div class="font-weight-bold text-h3">
                 <v-icon class="mb-1" large>mdi-thermometer</v-icon>
-                {{ Math.round(weather.main.temp) }}
-                <v-icon class="text-top mt-1"> mdi-temperature-celsius </v-icon>
+                {{ Math.round(weather.main.temp)
+                }}<v-icon class="text-top mt-1 white--text">
+                  mdi-temperature-celsius
+                </v-icon>
               </div>
             </v-col>
           </v-row>
           <span class="mx-1">
-            Min
-            {{ Math.round(weather.main.temp_min) }}
-            <v-icon class="mb-1" small>mdi-thermometer-chevron-down</v-icon>
-          </span>
-          <span class="mx-1">
-            Max
-            {{ Math.round(weather.main.temp_max) }}
-            <v-icon class="mb-1" small>mdi-thermometer-chevron-up</v-icon>
+            Feels Like
+            {{ Math.round(weather.main.feels_like)
+            }}<v-icon class="text-top" small>mdi-temperature-celsius</v-icon>
           </span>
           <span class="mx-1">
             Humidity
-            {{ weather.main.humidity.toFixed(2) }}%
-            <v-icon class="mb-1" small>mdi-water-percent</v-icon>
+            {{ weather.main.humidity.toFixed(2) }}%<v-icon class="mb-1" small
+              >mdi-water</v-icon
+            >
           </span>
         </slot>
       </v-card-text>
@@ -92,16 +90,16 @@ export default defineComponent({
       required: true,
     },
   },
-  data: () => {
+  data() {
     return {};
   },
   methods: {},
   computed: {
     cardClasses() {
-      if (this.weather.main.temp < 20) {
+      if (this.weather.main.temp < 23) {
         return "card-bg-cold";
       }
-      if (this.weather.main.temp < 30) {
+      if (this.weather.main.temp < 35) {
         return "card-bg-normal";
       }
 
@@ -120,7 +118,6 @@ export default defineComponent({
   color: #fff;
 }
 .card-bg-cold .v-btn__content,
-.card-bg-cold .mdi-temperature-celsius,
 .card-bg-cold div {
   color: #fff;
 }
@@ -130,7 +127,6 @@ export default defineComponent({
   color: #fff;
 }
 .card-bg-normal .v-btn__content,
-.card-bg-normal .mdi-temperature-celsius,
 .card-bg-normal div {
   color: #fff;
 }
@@ -140,7 +136,6 @@ export default defineComponent({
   color: #fff;
 }
 .card-bg-hot span.v-btn__content,
-.card-bg-hot .mdi-temperature-celsius,
 .card-bg-hot div {
   color: #fff;
 }

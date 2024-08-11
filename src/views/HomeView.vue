@@ -1,5 +1,5 @@
 <template>
-  <v-container class="max-w-900">
+  <v-container class="max-w-850">
     <Mybutton
       class="mb-3"
       block
@@ -40,27 +40,6 @@
       </v-sheet>
     </v-bottom-sheet>
     <!-- end sheet -->
-    <!-- showdetails -->
-    <v-dialog v-model="showDetails" height="800">
-      <v-card>
-        <v-card-title class="text-h5">
-          {{ showWeather }}
-        </v-card-title>
-
-        <v-card-text>
-          {{ showWeather }}
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <Mybutton :outlined="true" color="" @click="showDetails = false"
-            >close</Mybutton
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- endshowdetails -->
     <!-- config cards -->
     <v-dialog v-model="showConfigs" width="700">
       <v-card>
@@ -98,28 +77,35 @@
       </v-card>
     </v-dialog>
     <!-- end config cards -->
+    <!-- showdetails -->
+    <WeatherDetails
+      :isOpen="showDetails"
+      :showWeather="showWeather"
+      height="800"
+      @close="closeDetailsDialog"
+    />
+    <!-- endshowdetails -->
   </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import WeatherService from "@/services/WeatherService";
 import { WeatherType } from "@/types/WeatherType";
-import mockWeatherList from "@/utils/mock/weather";
-import WeatherCard from "@/components/WeatherCard.vue";
-import Mybutton from "@/components/buttons/Mybutton.vue";
 import { BrStatesType } from "@/types/BrStatesType";
 import mockBrStates from "@/utils/mock/brStates";
+import WeatherCard from "@/components/WeatherCard.vue";
+import Mybutton from "@/components/buttons/Mybutton.vue";
+import WeatherDetails from "@/components/WeatherDetails.vue";
+import WeatherService from "@/services/WeatherService";
 
 const weatherService = new WeatherService();
 
-const weatherList: WeatherType[] = mockWeatherList;
 const weatherConfigurations: BrStatesType = mockBrStates;
 
 export default defineComponent({
   name: "HomePage",
 
-  components: { WeatherCard, Mybutton },
+  components: { WeatherCard, Mybutton, WeatherDetails },
   data() {
     return {
       isLoading: false,
@@ -127,15 +113,26 @@ export default defineComponent({
       showEditWeatherSheet: false,
       showDetails: false,
       showConfigs: false,
-      weatherList: weatherList,
-      weatherConfigurations: weatherConfigurations,
-      editWeather: {},
-      showWeather: {},
+      weatherList: [] as WeatherType[],
+      weatherConfigurations: weatherConfigurations as BrStatesType,
+      editWeather: {
+        id: 0,
+        main: {
+          temp: 0,
+        },
+        name: "",
+      } as WeatherType,
+      showWeather: {
+        id: 0,
+        main: {
+          temp: 0,
+        },
+        name: "",
+      } as WeatherType,
     };
   },
   async mounted() {
     await this.loadWeather();
-    console.log("mounted");
   },
   methods: {
     isOdd(num: number) {
@@ -153,8 +150,11 @@ export default defineComponent({
     toggleEditWeatherSheet() {
       this.showEditWeatherSheet = !this.showEditWeatherSheet;
     },
-    toggleDetailsDialog() {
-      this.showDetails = !this.showDetails;
+    closeDetailsDialog() {
+      this.showDetails = false;
+    },
+    openDetailsDialog() {
+      this.showDetails = true;
     },
     toggleshowConfigsDialog() {
       this.showConfigs = !this.showConfigs;
@@ -177,25 +177,24 @@ export default defineComponent({
     openDetails(id: number) {
       const weatherToShow = { ...this.weatherList[id] };
       this.showWeather = weatherToShow;
-      this.toggleDetailsDialog();
+      this.openDetailsDialog();
     },
     getActiveWeathers() {
       return this.weatherConfigurations.filter((item) => item.displayed);
     },
     async loadWeather() {
       try {
-        //this.weatherList = [];
         const activeWeathers = this.getActiveWeathers();
-        console.log("try", weatherService, activeWeathers);
-        /* 
+
+        this.weatherList = [];
         activeWeathers.forEach(async (activeWeather) => {
           const { data } = await weatherService.getWeather(
             activeWeather.lat,
-            activeWeather.lng
+            activeWeather.lon
           );
 
           this.weatherList = [...this.weatherList, data];
-        }); */
+        });
       } catch (error) {
         console.log("erro:", error);
       } finally {
@@ -206,7 +205,7 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.max-w-900 {
+.max-w-850 {
   max-width: 850px;
 }
 </style>

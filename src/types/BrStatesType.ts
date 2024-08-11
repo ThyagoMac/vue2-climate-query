@@ -3,7 +3,7 @@ export type state = {
   uf: string;
   name: string;
   lat: number;
-  lng: number;
+  lon: number;
   regregion: string;
   displayed: boolean;
 };
