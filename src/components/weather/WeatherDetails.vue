@@ -32,7 +32,7 @@
 <script lang="ts">
 import { WeatherType } from "@/types/WeatherType";
 import { defineComponent, PropType } from "vue";
-import Mybutton from "./buttons/Mybutton.vue";
+import Mybutton from "@/components/buttons/Mybutton.vue";
 import VueApexCharts from "vue-apexcharts";
 import fiveDays from "@/utils/mock/fiveDays";
 

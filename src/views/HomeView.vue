@@ -7,7 +7,7 @@
       color="black"
       @click="showConfigs = !showConfigs"
     >
-      Config <v-icon class="ml-1" small> mdi-cog </v-icon>
+      Settings <v-icon class="ml-1" small> mdi-cog </v-icon>
     </Mybutton>
     <v-row no-gutters justify="center">
       <WeatherCard
@@ -17,65 +17,17 @@
         :is-loading="isLoading"
         :weather="weather"
         :size="lastWeather(index)"
-        @edit="loadEditWeather"
-        @remove="removeWeather"
         @actionClick="openDetails"
-      >
-      </WeatherCard>
+      />
     </v-row>
 
-    <!-- sheet -->
-    <v-bottom-sheet v-model="showEditWeatherSheet">
-      <v-sheet class="text-center">
-        <Mybutton
-          class="mt-6"
-          color="red"
-          @click="showEditWeatherSheet = !showEditWeatherSheet"
-        >
-          close
-        </Mybutton>
-        <div class="py-3">
-          {{ editWeather }}
-        </div>
-      </v-sheet>
-    </v-bottom-sheet>
-    <!-- end sheet -->
     <!-- config cards -->
-    <v-dialog v-model="showConfigs" width="700">
-      <v-card>
-        <v-card-title class="text-h5"> Select or remove states </v-card-title>
+    <WeatherSettings
+      :is-open="showConfigs"
+      @reloadWeather="reloadWeather"
+      @close="closeShowConfigs"
+    />
 
-        <v-card-text>
-          <v-row class="mt-4">
-            <v-col
-              v-for="(weatherConfiguration, index) in weatherConfigurations"
-              :key="index"
-              cols="12"
-              sm="4"
-              md="4"
-              class="pt-0 pb-0"
-            >
-              <v-checkbox
-                class="mt-0 mb-0"
-                v-model="weatherConfiguration.displayed"
-                :label="weatherConfiguration.name"
-              ></v-checkbox>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <Mybutton :outlined="true" color="black" @click="showConfigs = false">
-            close
-          </Mybutton>
-          <Mybutton :outlined="true" color="black" @click="reloadWeather">
-            confirm
-          </Mybutton>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <!-- end config cards -->
     <!-- showdetails -->
     <WeatherDetails
@@ -92,36 +44,25 @@
 import { defineComponent } from "vue";
 import { WeatherType } from "@/types/WeatherType";
 import { BrStatesType } from "@/types/BrStatesType";
-import mockBrStates from "@/utils/mock/brStates";
-import WeatherCard from "@/components/WeatherCard.vue";
+import WeatherCard from "@/components/weather/WeatherCard.vue";
 import Mybutton from "@/components/buttons/Mybutton.vue";
-import WeatherDetails from "@/components/WeatherDetails.vue";
+import WeatherDetails from "@/components/weather/WeatherDetails.vue";
+import WeatherSettings from "@/components/weather/WeatherSettings.vue";
 import WeatherService from "@/services/WeatherService";
 
 const weatherService = new WeatherService();
 
-const weatherConfigurations: BrStatesType = mockBrStates;
-
 export default defineComponent({
   name: "HomePage",
 
-  components: { WeatherCard, Mybutton, WeatherDetails },
+  components: { WeatherCard, Mybutton, WeatherSettings, WeatherDetails },
   data() {
     return {
       isLoading: false,
-      weather: null,
-      showEditWeatherSheet: false,
       showDetails: false,
       showConfigs: false,
       weatherList: [] as WeatherType[],
-      weatherConfigurations: weatherConfigurations as BrStatesType,
-      editWeather: {
-        id: 0,
-        main: {
-          temp: 0,
-        },
-        name: "",
-      } as WeatherType,
+      weatherConfigurations: {} as BrStatesType,
       showWeather: {
         id: 0,
         main: {
@@ -130,9 +71,6 @@ export default defineComponent({
         name: "",
       } as WeatherType,
     };
-  },
-  async mounted() {
-    await this.loadWeather();
   },
   methods: {
     isOdd(num: number) {
@@ -147,8 +85,8 @@ export default defineComponent({
       }
       return 6;
     },
-    toggleEditWeatherSheet() {
-      this.showEditWeatherSheet = !this.showEditWeatherSheet;
+    closeShowConfigs() {
+      this.showConfigs = false;
     },
     closeDetailsDialog() {
       this.showDetails = false;
@@ -156,23 +94,10 @@ export default defineComponent({
     openDetailsDialog() {
       this.showDetails = true;
     },
-    toggleshowConfigsDialog() {
-      this.showConfigs = !this.showConfigs;
-    },
-    reloadWeather() {
+    reloadWeather(config: BrStatesType) {
       this.showConfigs = false;
+      this.weatherConfigurations = config;
       this.loadWeather();
-    },
-    loadEditWeather(id: number) {
-      const finalWeather = { ...this.weatherList[id] };
-      this.editWeather = finalWeather;
-      this.toggleEditWeatherSheet();
-    },
-    removeWeather(id: number) {
-      const finalWeatherList = this.weatherList.filter(
-        (weather) => weather.id !== id
-      );
-      this.weatherList = finalWeatherList;
     },
     openDetails(id: number) {
       const weatherToShow = { ...this.weatherList[id] };

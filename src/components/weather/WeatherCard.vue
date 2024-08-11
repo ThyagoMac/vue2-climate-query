@@ -1,8 +1,5 @@
 <template>
   <v-col cols="12" :md="size">
-    <!-- 
-      class="my-3 mx-3 blue accent-1 white--text"
-    -->
     <v-card
       class="my-3 mx-3"
       :class="cardClasses"
@@ -15,18 +12,6 @@
             {{ weather.name }}
             <v-icon class="mb-1"> mdi-map-marker </v-icon>
           </div>
-          <!--
-          <div>
-            <Mybutton icon @click="$emit('edit', index)">
-              <v-icon> mdi-pencil </v-icon>
-            </Mybutton>
-            -->
-          <!--
-            <Mybutton icon @click="$emit('remove', index)">
-              <v-icon> mdi-delete </v-icon>
-            </Mybutton>
-          </div>
-          -->
         </v-row>
       </v-card-title>
       <v-card-text>
@@ -67,7 +52,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { WeatherType } from "@/types/WeatherType";
-import Mybutton from "./buttons/Mybutton.vue";
+import Mybutton from "@/components/buttons/Mybutton.vue";
 
 export default defineComponent({
   name: "WeatherCard",
@@ -93,7 +78,6 @@ export default defineComponent({
   data() {
     return {};
   },
-  methods: {},
   computed: {
     cardClasses() {
       if (this.weather.main.temp < 23) {
