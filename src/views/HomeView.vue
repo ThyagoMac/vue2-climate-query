@@ -1,87 +1,201 @@
 <template>
-  <v-container class="">
+  <v-container class="max-w-900">
+    <Mybutton
+      class="mb-3"
+      block
+      xLarge
+      color="black"
+      @click="showConfigs = !showConfigs"
+    >
+      Config <v-icon class="ml-1" small> mdi-cog </v-icon>
+    </Mybutton>
     <v-row no-gutters justify="center">
       <WeatherCard
         v-for="(weather, index) in weatherList"
-        :key="index"
-        :id="index"
+        :key="weather.id"
+        :index="index"
         :is-loading="isLoading"
-        :title="weather.name"
+        :weather="weather"
         :size="lastWeather(index)"
         @edit="loadEditWeather"
+        @remove="removeWeather"
+        @actionClick="openDetails"
       >
-        {{ weather.weather[0]?.main }}
       </WeatherCard>
     </v-row>
 
-    <v-icon dark right> mdi-checkbox-marked-circle </v-icon>
-    https://api.openweathermap.org/data/2.5/weather?lat=-15.868607497813757&lon=-47.82130864112691&lang=pt_br&appid=83bbcf10c1644a357a6a29b9c6d66fa0
-
     <!-- sheet -->
-    <v-bottom-sheet v-model="showSheet">
+    <v-bottom-sheet v-model="showEditWeatherSheet">
       <v-sheet class="text-center">
-        <v-btn class="mt-6" text color="red" @click="showSheet = !showSheet">
+        <Mybutton
+          class="mt-6"
+          color="red"
+          @click="showEditWeatherSheet = !showEditWeatherSheet"
+        >
           close
-        </v-btn>
+        </Mybutton>
         <div class="py-3">
           {{ editWeather }}
-          <div>{{ editWeather }}</div>
-          <div>{{ editWeather }}</div>
-          <div>{{ editWeather }}</div>
         </div>
       </v-sheet>
     </v-bottom-sheet>
+    <!-- end sheet -->
+    <!-- showdetails -->
+    <v-dialog v-model="showDetails" height="800">
+      <v-card>
+        <v-card-title class="text-h5">
+          {{ showWeather }}
+        </v-card-title>
+
+        <v-card-text>
+          {{ showWeather }}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <Mybutton :outlined="true" color="" @click="showDetails = false"
+            >close</Mybutton
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- endshowdetails -->
+    <!-- config cards -->
+    <v-dialog v-model="showConfigs" width="700">
+      <v-card>
+        <v-card-title class="text-h5"> Select or remove states </v-card-title>
+
+        <v-card-text>
+          <v-row class="mt-4">
+            <v-col
+              v-for="(weatherConfiguration, index) in weatherConfigurations"
+              :key="index"
+              cols="12"
+              sm="4"
+              md="4"
+              class="pt-0 pb-0"
+            >
+              <v-checkbox
+                class="mt-0 mb-0"
+                v-model="weatherConfiguration.displayed"
+                :label="weatherConfiguration.name"
+              ></v-checkbox>
+            </v-col>
+          </v-row>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <Mybutton :outlined="true" color="black" @click="showConfigs = false">
+            close
+          </Mybutton>
+          <Mybutton :outlined="true" color="black" @click="reloadWeather">
+            confirm
+          </Mybutton>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- end config cards -->
   </v-container>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import WeatherService from "@/services/WeatherService";
 import { WeatherType } from "@/types/WeatherType";
 import mockWeatherList from "@/utils/mock/weather";
 import WeatherCard from "@/components/WeatherCard.vue";
+import Mybutton from "@/components/buttons/Mybutton.vue";
+import { BrStatesType } from "@/types/BrStatesType";
+import mockBrStates from "@/utils/mock/brStates";
 
 const weatherService = new WeatherService();
 
 const weatherList: WeatherType[] = mockWeatherList;
+const weatherConfigurations: BrStatesType = mockBrStates;
 
-export default Vue.extend({
+export default defineComponent({
   name: "HomePage",
 
-  components: { WeatherCard },
-  data: () => {
+  components: { WeatherCard, Mybutton },
+  data() {
     return {
       isLoading: false,
       weather: null,
-      showSheet: false,
+      showEditWeatherSheet: false,
+      showDetails: false,
+      showConfigs: false,
       weatherList: weatherList,
+      weatherConfigurations: weatherConfigurations,
       editWeather: {},
+      showWeather: {},
     };
   },
-  async created() {
+  async mounted() {
     await this.loadWeather();
-    console.log("created");
+    console.log("mounted");
   },
   methods: {
+    isOdd(num: number) {
+      return num % 2 !== 0;
+    },
     lastWeather(index: number) {
-      if (index + 1 === this.weatherList?.length) {
+      if (
+        this.isOdd(this.weatherList?.length) &&
+        index + 1 === this.weatherList?.length
+      ) {
         return 12;
       }
       return 6;
     },
-    toggleSheet() {
-      this.showSheet = !this.showSheet;
+    toggleEditWeatherSheet() {
+      this.showEditWeatherSheet = !this.showEditWeatherSheet;
+    },
+    toggleDetailsDialog() {
+      this.showDetails = !this.showDetails;
+    },
+    toggleshowConfigsDialog() {
+      this.showConfigs = !this.showConfigs;
+    },
+    reloadWeather() {
+      this.showConfigs = false;
+      this.loadWeather();
     },
     loadEditWeather(id: number) {
-      const weatherToEdit = { ...this.weatherList[id] };
-      this.editWeather = weatherToEdit;
-      this.toggleSheet();
+      const finalWeather = { ...this.weatherList[id] };
+      this.editWeather = finalWeather;
+      this.toggleEditWeatherSheet();
+    },
+    removeWeather(id: number) {
+      const finalWeatherList = this.weatherList.filter(
+        (weather) => weather.id !== id
+      );
+      this.weatherList = finalWeatherList;
+    },
+    openDetails(id: number) {
+      const weatherToShow = { ...this.weatherList[id] };
+      this.showWeather = weatherToShow;
+      this.toggleDetailsDialog();
+    },
+    getActiveWeathers() {
+      return this.weatherConfigurations.filter((item) => item.displayed);
     },
     async loadWeather() {
       try {
-        console.log("try", weatherService);
-        /* const { data } = await weatherService.getWeather(-22.84, -43.15);
-        this.weather = data; */
+        //this.weatherList = [];
+        const activeWeathers = this.getActiveWeathers();
+        console.log("try", weatherService, activeWeathers);
+        /* 
+        activeWeathers.forEach(async (activeWeather) => {
+          const { data } = await weatherService.getWeather(
+            activeWeather.lat,
+            activeWeather.lng
+          );
+
+          this.weatherList = [...this.weatherList, data];
+        }); */
       } catch (error) {
         console.log("erro:", error);
       } finally {
@@ -91,3 +205,8 @@ export default Vue.extend({
   },
 });
 </script>
+<style scoped>
+.max-w-900 {
+  max-width: 850px;
+}
+</style>

@@ -150,7 +150,7 @@ const mockWeatherList: WeatherType[] = [
     ],
     base: "stations",
     main: {
-      temp: 12.48,
+      temp: 30.48,
       feels_like: 11.69,
       temp_min: 12.48,
       temp_max: 13.05,
