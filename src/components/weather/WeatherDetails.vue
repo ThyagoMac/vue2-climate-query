@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { WeatherType } from "@/types/WeatherType";
-import { defineComponent, PropType } from "vue";
+import Vue, { PropType } from "vue";
 import Mybutton from "@/components/buttons/Mybutton.vue";
 import VueApexCharts from "vue-apexcharts";
 import fiveDays from "@/utils/mock/fiveDays";
@@ -40,7 +40,7 @@ import WeatherService from "@/services/WeatherService";
 
 const weatherService = new WeatherService();
 
-export default defineComponent({
+export default Vue.extend({
   name: "WeatherDetails",
   components: { Mybutton, apexchart: VueApexCharts },
   props: {

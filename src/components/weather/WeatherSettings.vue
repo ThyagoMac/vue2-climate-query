@@ -44,10 +44,10 @@
 <script lang="ts">
 import { BrStatesType } from "@/types/BrStatesType";
 import mockBrStates from "@/utils/mock/brStates";
-import { defineComponent } from "vue";
+import Vue from "vue";
 import Mybutton from "../buttons/Mybutton.vue";
 
-export default defineComponent({
+export default Vue.extend({
   name: "WeatherSettings",
   components: { Mybutton },
   props: {

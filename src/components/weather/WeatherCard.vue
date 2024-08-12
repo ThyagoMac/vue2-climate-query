@@ -50,11 +50,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import Vue, { PropType } from "vue";
 import { WeatherType } from "@/types/WeatherType";
 import Mybutton from "@/components/buttons/Mybutton.vue";
 
-export default defineComponent({
+export default Vue.extend({
   name: "WeatherCard",
   components: { Mybutton },
   props: {

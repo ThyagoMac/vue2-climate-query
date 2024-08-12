@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import Vue from "vue";
 import { WeatherType } from "@/types/WeatherType";
 import { BrStatesType } from "@/types/BrStatesType";
 import WeatherCard from "@/components/weather/WeatherCard.vue";
@@ -52,7 +52,7 @@ import WeatherService from "@/services/WeatherService";
 
 const weatherService = new WeatherService();
 
-export default defineComponent({
+export default Vue.extend({
   name: "HomePage",
 
   components: { WeatherCard, Mybutton, WeatherSettings, WeatherDetails },
