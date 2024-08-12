@@ -2,12 +2,12 @@
 
 ## Used Versions
 
-node 22.2.0
-npm 10.8.2
-vue/cli 5.0.8
-vue/cli-plugin-typescript@5.0.8
-vuetify-loader@1.9.2
-vuetify@2.7.2
+*node 22.2.0
+*npm 10.8.2
+*vue/cli 5.0.8
+*vue/cli-plugin-typescript@5.0.8
+*vuetify-loader@1.9.2
+*vuetify@2.7.2
 
 ## API parameters
 
