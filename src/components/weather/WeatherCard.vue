@@ -42,7 +42,7 @@
       </v-card-text>
       <v-card-actions class="pt-0">
         <Mybutton block @click="$emit('actionClick', index)">
-          More info <v-icon small class="ml-1">mdi-chart-bar</v-icon>
+          Forecast <v-icon small class="ml-1">mdi-chart-bar</v-icon>
         </Mybutton>
       </v-card-actions>
     </v-card>

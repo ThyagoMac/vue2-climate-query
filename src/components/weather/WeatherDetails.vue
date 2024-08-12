@@ -5,7 +5,7 @@
         <div class="text-h5">
           {{ showWeather.name }}
         </div>
-        <div class="text-caption">forecast for 5 days</div>
+        <div class="text-caption">forecast for next 5 days</div>
       </v-card-title>
 
       <v-card-text>
