@@ -1,0 +1,2 @@
+VUE_APP_WEATHER_API_URL=https://api.openweathermap.org/data/2.5
+VUE_APP_WEATHER_API_ID=83bbcf10c1644a357a6a29b9c6d66fa0

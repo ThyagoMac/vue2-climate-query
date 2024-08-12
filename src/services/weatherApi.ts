@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export default axios.create({
-  baseURL: "https://api.openweathermap.org/data/2.5",
+  baseURL: process.env.VUE_APP_WEATHER_API_URL,
   params: {
-    appid: "83bbcf10c1644a357a6a29b9c6d66fa0",
+    appid: process.env.VUE_APP_WEATHER_APPID,
     lang: "pt_br",
     units: "metric",
   },
