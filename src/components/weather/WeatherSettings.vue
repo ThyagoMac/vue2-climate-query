@@ -60,7 +60,7 @@ export default defineComponent({
     return {
       isLoading: false,
       showConfigs: false,
-      weatherConfigurations: {} as BrStatesType,
+      weatherConfigurations: [] as BrStatesType,
     };
   },
   mounted() {

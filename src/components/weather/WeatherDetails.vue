@@ -144,10 +144,7 @@ export default defineComponent({
         );
         this.fiveDays = data;
 
-        const uniqueDaysWeather = this.getUniqueDays();
-        uniqueDaysWeather.forEach((element) => {
-          console.log(element.dt_txt);
-        });
+        this.getUniqueDays();
       } catch (error) {
         console.log("erro:", error);
       } finally {
