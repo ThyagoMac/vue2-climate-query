@@ -1,7 +1,12 @@
 <template>
   <v-dialog v-model="showConfigs" width="700" @click:outside="close">
     <v-card>
-      <v-card-title class="text-h5"> Select or remove states </v-card-title>
+      <v-card-title class="text-h5 d-block">
+        <div class="text-h5">Select or remove states</div>
+        <div class="text-caption">
+          ({{ activeWeathers.length }}) selected limit of 10 states
+        </div>
+      </v-card-title>
 
       <v-card-text>
         <v-row class="mt-4">
@@ -17,6 +22,7 @@
               class="mt-0 mb-0"
               v-model="weatherConfiguration.displayed"
               :label="weatherConfiguration.name"
+              :disabled="disableAddMore(weatherConfiguration.displayed)"
             ></v-checkbox>
           </v-col>
         </v-row>
@@ -79,11 +85,25 @@ export default defineComponent({
         "weatherSettings",
         JSON.stringify(this.weatherConfigurations)
       );
-      this.$emit("reloadWeather", this.weatherConfigurations);
+      this.$emit("reloadWeather", this.activeWeathers);
     },
     close() {
       this.showConfigs = false;
       this.$emit("close");
+    },
+    disableAddMore(alreadyDisplayed: boolean) {
+      if (alreadyDisplayed) {
+        return false;
+      }
+      if (this.activeWeathers?.length === 10) {
+        return true;
+      }
+      return false;
+    },
+  },
+  computed: {
+    activeWeathers(): BrStatesType {
+      return this.weatherConfigurations.filter((item) => item.displayed);
     },
   },
   watch: {

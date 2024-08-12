@@ -104,12 +104,9 @@ export default defineComponent({
       this.showWeather = weatherToShow;
       this.openDetailsDialog();
     },
-    getActiveWeathers() {
-      return this.weatherConfigurations.filter((item) => item.displayed);
-    },
     async loadWeather() {
       try {
-        const activeWeathers = this.getActiveWeathers();
+        const activeWeathers = this.weatherConfigurations;
 
         this.weatherList = [];
         activeWeathers.forEach(async (activeWeather) => {
